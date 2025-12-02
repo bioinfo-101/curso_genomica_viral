@@ -1,0 +1,37 @@
+{
+  "title": "Filogenia vírus Chikungunya",
+  "maintainers": [
+    {
+      "name": "Curso Genomica Viral"
+    }
+  ],
+  "build_url": "https://github.com/bioinfo-101/curso_genomica_viral",
+  "colorings": [
+    {
+      "key": "location",
+      "title": "Location",
+      "type": "categorical"
+    },
+    {
+      "key": "clade_membership",
+      "title": "Clades",
+      "type": "categorical"
+    }
+  ],
+  "geo_resolutions": [
+    "location"
+  ],
+  "display_defaults": {
+    "geo_resolution": "location",
+    "color_by": "clade_membership"
+  },
+  "filters": [
+    "location",
+    "clade_membership"
+  ],
+  "panels": [
+    "tree",
+    "map",
+    "entropy"
+  ]
+}

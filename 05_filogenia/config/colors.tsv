@@ -1,0 +1,44 @@
+location	Angola	#E67C3B
+location	Argentina	#BC5996
+location	Bangladesh	#8EBC66
+location	Brazil	#A85BBF
+location	Cambodia	#77A14D
+location	Cameroon	#F0A050
+location	Central African Republic	#E8935A
+location	China	#549B6E
+location	Colombia	#904FC5
+location	Cote d'Ivoire	#D88545
+location	Democratic Republic of the Congo	#EDA060
+location	Finland	#4F7CCD
+location	France	#5E7ACB
+location	French Guiana	#7D4DC9
+location	Guadeloupe	#CC3F31
+location	Haiti	#DB7259
+location	Hong Kong	#4292B7
+location	India	#9EAE4F
+location	Italy	#657BC1
+location	Kenya	#C89540
+location	Malaysia	#6CA2D4
+location	Maldives	#8EAC39
+location	Mauritius	#B8763A
+location	Mayotte	#D07D3F
+location	Myanmar	#ADCE6C
+location	New Caledonia	#89B3D8
+location	Nicaragua	#DC2F24
+location	Nigeria	#F5B870
+location	Pakistan	#C2B959
+location	Philippines	#5699B4
+location	Republic of the Congo	#F2A868
+location	Reunion	#C47B3D
+location	Senegal	#E58550
+location	Singapore	#7FBCCB
+location	South Africa	#A8652E
+location	South Korea	#5590D1
+location	Sri Lanka	#A6C055
+location	Tanzania	#CC8042
+location	Thailand	#7DB874
+location	USA	#E39C37
+location	Yemen	#D6DF5D
+clade_membership	I-WestAfrica	#4F7CCD
+clade_membership	II-ECSA	#7DB874
+clade_membership	III-Asian	#D6DF5D

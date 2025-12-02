@@ -1,0 +1,202 @@
+rule all:
+    input:
+        auspice_json = "../outputs/05_filogenia/chikv.auspice.json"
+
+# Input files
+input_fasta = "../outputs/04_ncbi_data/combined_dataset.fasta"
+input_metadata = "../outputs/04_ncbi_data/combined_metadata.tsv"
+reference = "../inputs/reference.gb"
+mask_file = "../inputs/mask.bed"
+clades_file = "../inputs/clades.tsv"
+colors = "config/colors.tsv"
+lat_longs = "config/lat_longs.tsv"
+auspice_config = "config/auspice_config.json"
+
+rule align:
+    message:
+        """
+        Aligning sequences to {input.reference}
+          - filling gaps with N
+        """
+    input:
+        sequences = input_fasta,
+        reference = reference
+    output:
+        alignment = "../outputs/05_filogenia/aligned.fasta"
+    shell:
+        """
+        augur align \
+            --sequences {input.sequences} \
+            --reference-sequence {input.reference} \
+            --output {output.alignment} \
+            --fill-gaps
+        """
+
+rule mask:
+    message:
+        """
+        Masking UTR regions based on {mask_file}
+        """
+    input:
+        alignment = rules.align.output.alignment,
+        mask_file = mask_file
+    output:
+        masked = "../outputs/05_filogenia/masked.fasta"
+    shell:
+        """
+        augur mask \
+            --sequences {input.alignment} \
+            --mask {input.mask_file} \
+            --output {output.masked}
+        """
+
+rule tree:
+    message: "Building phylogenetic tree"
+    input:
+        alignment = rules.mask.output.masked
+    output:
+        tree = "../outputs/05_filogenia/tree_raw.nwk"
+    params:
+        tree_argument = "--seed 123 -alrt 1000 -redo"
+    shell:
+        """
+        augur tree \
+            --alignment {input.alignment} \
+            --nthreads 2 \
+            --output {output.tree} \
+            --method iqtree \
+            --override-default-args \
+            --substitution-model GTR+F \
+            --tree-builder-args '{params.tree_argument}'
+        """
+
+rule refine:
+    message:
+        """
+        Refining tree
+          - estimate timetree
+          - use {params.coalescent} coalescent timescale
+          - estimate {params.date_inference} node dates
+        """
+    input:
+        tree = rules.tree.output.tree,
+        alignment = rules.mask.output,
+        metadata = input_metadata
+    output:
+        tree = "../outputs/05_filogenia/tree.nwk",
+        node_data = "../outputs/05_filogenia/branch_lengths.json"
+    params:
+        coalescent = "opt",
+        date_inference = "joint",
+    shell:
+        """
+        augur refine \
+            --tree {input.tree} \
+            --alignment {input.alignment} \
+            --metadata {input.metadata} \
+            --output-tree {output.tree} \
+            --output-node-data {output.node_data} \
+            --timetree \
+            --coalescent {params.coalescent} \
+            --date-confidence \
+            --date-inference {params.date_inference}
+        """
+
+rule ancestral:
+    message: "Reconstructing ancestral sequences and mutations"
+    input:
+        tree = rules.refine.output.tree,
+        alignment = rules.mask.output
+    output:
+        node_data = "../outputs/05_filogenia/nt_muts.json"
+    params:
+        inference = "joint"
+    shell:
+        """
+        augur ancestral \
+            --tree {input.tree} \
+            --alignment {input.alignment} \
+            --output-node-data {output.node_data} \
+            --inference {params.inference}
+        """
+
+rule translate:
+    message: "Translating amino acid sequences"
+    input:
+        tree = rules.refine.output.tree,
+        node_data = rules.ancestral.output.node_data,
+        reference = reference
+    output:
+        node_data = "../outputs/05_filogenia/aa_muts.json"
+    shell:
+        """
+        augur translate \
+            --tree {input.tree} \
+            --ancestral-sequences {input.node_data} \
+            --reference-sequence {input.reference} \
+            --output-node-data {output.node_data}
+        """
+
+rule traits:
+    message: "Inferring ancestral traits for {params.columns!s}"
+    input:
+        tree = rules.refine.output.tree,
+        metadata = input_metadata
+    output:
+        node_data = "../outputs/05_filogenia/traits.json"
+    params:
+        columns = "location"
+    shell:
+        """
+        augur traits \
+            --tree {input.tree} \
+            --metadata {input.metadata} \
+            --output-node-data {output.node_data} \
+            --columns {params.columns} \
+            --confidence
+        """
+
+rule clades:
+    message: "Assigning clades based on amino acid mutations"
+    input:
+        tree = rules.refine.output.tree,
+        aa_muts = rules.translate.output.node_data,
+        clade_defs = clades_file
+    output:
+        clades = "../outputs/05_filogenia/clades.json"
+    shell:
+        """
+        augur clades \
+            --tree {input.tree} \
+            --mutations {input.aa_muts} \
+            --clades {input.clade_defs} \
+            --output {output.clades}
+        """
+
+rule export:
+    message: "Exporting data files for auspice"
+    input:
+        tree = rules.refine.output.tree,
+        metadata = input_metadata,
+        branch_lengths = rules.refine.output.node_data,
+        traits = rules.traits.output.node_data,
+        clades = rules.clades.output.clades,
+        nt_muts = rules.ancestral.output.node_data,
+        aa_muts = rules.translate.output.node_data,
+        colors = colors,
+        lat_longs = lat_longs,
+        auspice_config = auspice_config
+    output:
+        auspice_json = "../outputs/05_filogenia/chikv.auspice.json"
+    shell:
+        """
+        augur export v2 \
+            --tree {input.tree} \
+            --metadata {input.metadata} \
+            --node-data {input.branch_lengths} {input.traits} {input.nt_muts} {input.aa_muts} {input.clades} \
+            --colors {input.colors} \
+            --lat-longs {input.lat_longs} \
+            --auspice-config {input.auspice_config} \
+            --include-root-sequence \
+            --output {output.auspice_json}
+        """

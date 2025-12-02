@@ -1,0 +1,36 @@
+name: curso
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  # Quality Control
+  - fastp=1.0
+  - multiqc=1.25.2
+  
+  # Mapping and Assembly
+  - bwa=0.7.18
+  - samtools=1.21
+  - ivar=1.4
+  
+  # Nextclade
+  - nextclade=3.15.3
+  
+  # NCBI Data Tools
+  - ncbi-datasets-cli=18.9.0
+  
+  # Phylogenetic Analysis (Nextstrain/Augur)
+  - augur=32.0.0
+  
+  # Workflow
+  - snakemake-minimal=7.32.4
+  
+  # Python packages
+  - python=3.11
+  - biopython=1.86
+  - pandas=2.3.3
+  - numpy=2.3.4
+  - matplotlib-base=3.10.7
+  
+  # Visualization (Node.js for Auspice)
+  - nodejs=20

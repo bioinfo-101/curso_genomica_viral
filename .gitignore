@@ -1,0 +1,7 @@
+.DS_Store
+outputs
+bin
+02_mapping/reference.fa.*
+04_ncbi_data/chikv_genomes
+04_ncbi_data/chikv_genomes.zip
+05_filogenia/.snakemake
