@@ -1,6 +1,8 @@
 # Curso de Genômica Viral - Chikungunya
 
-Curso prático de análise genômica de Chikungunya vírus, abrangendo desde o controle de qualidade dos dados até análises filogenéticas e visualização com Nextstrain/Auspice.
+Este repositório contém o conteúdo prático do minicurso "Aplicações de bioinformática na vigilância genômica de patógenos virais", a parte teórica está disponível [neste vídeo no youtube](https://www.youtube.com/watch?v=8NZM8kYi57o).
+
+Nesta parte prática realizaremos a análise genômica de Chikungunya vírus a partir de dados artificais simulando um sequenciamento Illumina paired-end de reads de 250 bases, abrangendo desde o controle de qualidade dos dados até análises filogenéticas e visualização com Nextstrain/Auspice.
 
 ## 📋 Objetivos de Aprendizagem
 
