@@ -84,7 +84,7 @@ Os outputs de cada módulo servem como inputs para os módulos subsequentes:
 
 | Ferramenta | Versão | Uso |
 |------------|--------|-----|
-| fastp | 0.23.4 | Controle de qualidade |
+| fastp | 1.0.1 | Controle de qualidade |
 | BWA | 0.7.18 | Mapeamento de reads |
 | SAMtools | 1.21 | Manipulação de SAM/BAM |
 | iVar | 1.4.3 | Geração de consenso |
